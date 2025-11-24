@@ -61,6 +61,7 @@
     "react-router-dom": "^6.21.1"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "testPathIgnorePatterns": ["/node_modules/", "/tests/"]
   }
 }
