@@ -31,6 +31,13 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run e2e tests
         run: npm run test:e2e
+      - name: Test Success
+        uses: rjstone/discord-webhook-notify@v2
+        if: success()
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          severity: info
+          details: All tests passed!
       - name: Deploy to Firebase Preview Channel
         if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
         uses: FirebaseExtended/action-hosting-deploy@v0
