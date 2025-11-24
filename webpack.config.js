@@ -51,9 +51,7 @@ module.exports = {
       filename: './index.html',
     }),
     new CopyPlugin({
-      patterns: [
-        { from: 'public/health.json', to: 'health.json' },
-      ],
+      patterns: [{ from: 'public/health.json', to: 'health.json' }],
     }),
   ],
 };
