@@ -10,7 +10,9 @@
     "eslint": "eslint './**/*.{js,jsx}'",
     "lint": "prettier --check './**/*.{js,jsx,json,css,md}'",
     "format": "prettier --write './**/*.{js,jsx,json,css,md}'",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "start-test": "webpack-dev-server --mode development",
+    "test:e2e": "playwright test"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,7 @@
     "@babel/plugin-transform-runtime": "^7.23.7",
     "@babel/preset-env": "^7.23.7",
     "@babel/preset-react": "^7.23.3",
+    "@playwright/test": "^1.56.1",
     "@testing-library/jest-dom": "^6.2.0",
     "@testing-library/react": "^14.1.2",
     "babel-jest": "^29.7.0",
