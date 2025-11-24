@@ -1,4 +1,5 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -48,6 +49,11 @@ module.exports = {
     new HtmlWebPackPlugin({
       template: './public/index.html',
       filename: './index.html',
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: 'public/health.json', to: 'health.json' },
+      ],
     }),
   ],
 };
