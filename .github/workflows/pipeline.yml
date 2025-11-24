@@ -1,0 +1,76 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - fullstackopen
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  simple_deployment_pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Check code formatting
+        run: npm run lint
+      - name: Lint code
+        run: npm run eslint
+      - name: Build application
+        run: npm run build
+      - name: Run tests
+        run: npm test
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run e2e tests
+        run: npm run test:e2e
+      - name: Deploy to Firebase Preview Channel
+        if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        id: firebase_preview
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: fullstackopen-part11
+          channelId: preview
+      - name: Health Check on Preview
+        if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
+        run: |
+          echo "Checking health endpoint at: ${{ steps.firebase_preview.outputs.details_url }}"
+          PREVIEW_URL="${{ steps.firebase_preview.outputs.details_url }}"
+          # Extract the base URL (remove any path)
+          BASE_URL=$(echo $PREVIEW_URL | sed 's/\(https:\/\/[^\/]*\).*/\1/')
+          echo "Health check URL: ${BASE_URL}/health.json"
+          # Wait a few seconds for deployment to be fully available
+          sleep 10
+          # Check health endpoint
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_URL}/health.json)
+          if [ $RESPONSE -eq 200 ]; then
+            echo "Health check passed! Status code: $RESPONSE"
+            HEALTH_CONTENT=$(curl -s ${BASE_URL}/health.json)
+            echo "Health response: $HEALTH_CONTENT"
+            if echo "$HEALTH_CONTENT" | grep -q '"status"[[:space:]]*:[[:space:]]*"ok"'; then
+              echo "Health check content is valid"
+            else
+              echo "Health check content is invalid"
+              exit 1
+            fi
+          else
+            echo "Health check failed! Status code: $RESPONSE"
+            exit 1
+          fi
+      - name: Deploy to Firebase Live Channel
+        if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FULLSTACKOPEN_PART11 }}"
+          projectId: fullstackopen-part11
+          channelId: live
