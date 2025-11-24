@@ -28,7 +28,11 @@ jobs:
               run: npx playwright install --with-deps
             - name: Run e2e tests
               run: npm run test:e2e
-            # - name: Deploy to Vercel
-            #   uses: amondnet/vercel-action@v20
-            #   with:
-            #       vercel-token: ${{ secrets.VERCEL_TOKEN }}
+            - name: Deploy to Firebase
+              if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
+              uses: FirebaseExtended/action-hosting-deploy@v0
+              with:
+                  repoToken: "${{ secrets.GITHUB_TOKEN }}"
+                  firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+                  projectId: fullstackopen-part11
+                  channelId: live
