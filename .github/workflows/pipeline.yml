@@ -56,7 +56,7 @@ jobs:
             echo "Health check passed! Status code: $RESPONSE"
             HEALTH_CONTENT=$(curl -s ${BASE_URL}/health.json)
             echo "Health response: $HEALTH_CONTENT"
-            if echo "$HEALTH_CONTENT" | grep -q '"status":"ok"'; then
+            if echo "$HEALTH_CONTENT" | grep -q '"status"[[:space:]]*:[[:space:]]*"ok"'; then
               echo "Health check content is valid"
             else
               echo "Health check content is invalid"
