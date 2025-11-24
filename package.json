@@ -62,6 +62,9 @@
   },
   "jest": {
     "testEnvironment": "jsdom",
-    "testPathIgnorePatterns": ["/node_modules/", "/tests/"]
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/tests/"
+    ]
   }
 }
