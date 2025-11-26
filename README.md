@@ -1,5 +1,7 @@
 # Full Stack open CI/CD
 
+The other exercises for this part are in https://github.com/nickmeinhold/fullstackopen-part11.20
+
 This repository is used for the CI/CD module of the Full stack open course
 
 Fork the repository to complete course exercises
